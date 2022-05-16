@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class FebsConstant {
 
-    public static String UNCOMPRESS = "./cache/" + DateUtil.format(new Date(), new SimpleDateFormat("yyyy-MM-dd")) + "/";
+    public static String UNCOMPRESS ;//= "./cache/" + DateUtil.format(new Date(), new SimpleDateFormat("yyyy-MM-dd")) + "/";
 //    public static String UNCOMPRESS = "D:\\cache\\" + DateUtil.format(new Date(), new SimpleDateFormat("yyyy-MM-dd-hhmm")) + "\\";
     // user缓存前缀
     public static final String USER_CACHE_PREFIX = "febs.cache.user.";

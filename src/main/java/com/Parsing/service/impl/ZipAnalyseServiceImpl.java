@@ -20,8 +20,11 @@ import java.util.*;
 @Service
 public class ZipAnalyseServiceImpl implements IZipAnalyseService {
     @Override
-    public  List<List<Map<String, Object>>> getZipFileContent(String zipPath, String dest, String passwd) throws ZipException, IOException {
+    public  List<List<Map<String, Object>>> getZipFileContent(String zipPath, String dest, String passwd) throws ZipException, IOException, InterruptedException {
         File zipFilePath = new File(zipPath);
+        if (!zipFilePath.exists()) {
+            Thread.sleep(10000);
+        }
         if (!zipFilePath.exists()) {
             return null;
         }

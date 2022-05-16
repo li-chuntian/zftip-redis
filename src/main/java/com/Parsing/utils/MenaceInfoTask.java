@@ -22,7 +22,7 @@ public class MenaceInfoTask extends TimerTask {
     private final RedisController redisController;
 
         private final List<String> areaNameList = Arrays.asList("changde","chongqing","jiangsu","guizhou","henan","jingmen","yunnan","guangdong","kunming","hunan","hebei","sichuan","guiyang");
-//    private final List<String> areaNameList = Arrays.asList("changde", "chongqing");
+//    private final List<String> areaNameList = Arrays.asList("changde");
 
     public MenaceInfoTask(LostAssetsService lostAssetsService, IZipAnalyseService zipAnalyseService, RedisController redisController) {
         this.lostAssetsService = lostAssetsService;

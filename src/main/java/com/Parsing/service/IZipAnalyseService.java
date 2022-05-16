@@ -14,5 +14,5 @@ public interface IZipAnalyseService {
      * @param dest 解压地址
      * @param passwd 密码
      */
-    List<List<Map<String, Object>>> getZipFileContent(String zipPath, String dest, String passwd) throws ZipException, IOException;
+    List<List<Map<String, Object>>> getZipFileContent(String zipPath, String dest, String passwd) throws ZipException, IOException, InterruptedException;
 }
