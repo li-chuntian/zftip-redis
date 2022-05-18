@@ -74,7 +74,7 @@ public class LostAssetsServiceImpl implements LostAssetsService {
                     .get()
                     .build();
             /**查询等待时间*/
-            Thread.sleep(30 * 1000);
+            Thread.sleep(60 * 1000);
             Call resultCall = resultHttpClient.newCall(resultRequest);
             Response resultResponse = resultCall.execute();
             JSONObject resultJsonObject = new JSONObject(resultResponse.body().string());

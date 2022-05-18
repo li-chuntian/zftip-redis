@@ -22,6 +22,6 @@ public class MenaceInfoController implements CommandLineRunner {
     public void run(String... args) {
         MenaceInfoTask task = new MenaceInfoTask(lostAssetsService, zipAnalyseService, redisController);
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task,0,1000*60*2);
+        timer.scheduleAtFixedRate(task,0,1000*60*60*24);
     }
 }

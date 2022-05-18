@@ -47,7 +47,6 @@ public class ZipAnalyseServiceImpl implements IZipAnalyseService {
             }
             excelFile.close();
             workBookData = getWorkBookData(workBook);
-            System.out.println(workBookData.toString());
         }
         return workBookData;
     }
