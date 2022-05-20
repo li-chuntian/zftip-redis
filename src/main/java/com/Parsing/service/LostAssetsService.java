@@ -9,5 +9,5 @@ public interface LostAssetsService  {
      * @param onceQueryEndTime 查询结束时间
      * @return
      */
-    String fetchLostAssetsResult(String areaName, String onceQueryStartTime, String onceQueryEndTime);
+    String fetchLostAssetsResult(String areaName, String onceQueryStartTime, String onceQueryEndTime, Integer searchWaitTime);
 }

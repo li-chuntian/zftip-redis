@@ -17,7 +17,6 @@ public class RedisController {
     private CacheService cacheService;
     private final static Logger logger = LoggerFactory.getLogger(MenaceInfoTask.class);
     public void saveZipDataToRedis(List<List<Map<String, Object>>> zipContent) {
-        System.out.println("开始导入数据");
         for (List<Map<String, Object>> content : zipContent) {
             if (content.size() > 0) {
                 for (Map<String, Object> map : content) {
@@ -26,8 +25,6 @@ public class RedisController {
                 }
             }
         }
-        System.out.println("导入完成");
-
     }
 }
 

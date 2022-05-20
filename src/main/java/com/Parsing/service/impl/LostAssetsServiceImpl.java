@@ -3,13 +3,17 @@ package com.Parsing.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.Parsing.entity.FebsConstant;
 import com.Parsing.utils.DownloadUtil;
+import com.Parsing.utils.MenaceInfoTask;
 import com.Parsing.utils.OKHttpClientBuilder;
 import com.Parsing.service.LostAssetsService;
 import cn.hutool.json.JSONObject;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -27,8 +31,10 @@ import java.util.regex.Pattern;
 @Service
 public class LostAssetsServiceImpl implements LostAssetsService {
 
+    private final static Logger logger = LoggerFactory.getLogger(LostAssetsServiceImpl.class);
+
     @Override
-    public String fetchLostAssetsResult(String areaName, String onceQueryStartTime, String onceQueryEndTime) {
+    public String fetchLostAssetsResult(String areaName, String onceQueryStartTime, String onceQueryEndTime, Integer searchWaitTime) {
 
         // 压缩包目录
         String dirPath = FebsConstant.UNCOMPRESS + areaName;
@@ -45,7 +51,7 @@ public class LostAssetsServiceImpl implements LostAssetsService {
         jsonObjectTemp.set("query", getIPsByAreaName(areaName));
         jsonObjectTemp.set("start_time", onceQueryStartTime);
         jsonObjectTemp.set("end_time", onceQueryEndTime);
-        System.out.println(jsonObjectTemp.toString());
+//        System.out.println(jsonObjectTemp.toString());
         RequestBody body = RequestBody.create(mediaType, jsonObjectTemp.toString());
         Request request = new Request.Builder()
                 .url(FebsConstant.QIHOO_LOSTASSETS_URL)
@@ -64,25 +70,33 @@ public class LostAssetsServiceImpl implements LostAssetsService {
             JSONObject resultJsonStr = new JSONObject(resultJson);
             String taskId = resultJsonStr.get("task_id").toString();
             /**获取失陷检测结果*/
-            OkHttpClient resultHttpClient = OKHttpClientBuilder.buildOKHttpClient().build();
-            Request resultRequest = new Request.Builder()
-                    .url(FebsConstant.QIHOO_LOSTASSETS_RESULT_URL + taskId)
-                    .header("X-Api-Key", FebsConstant.QIHOO_ASSETS_API_KEY)
-                    .header("timestamp", timeStampStr)
-                    .header("sign", encode(finalStr))
-                    .header("Content-Type", "application/json")
-                    .get()
-                    .build();
-            /**查询等待时间*/
-            Thread.sleep(60 * 1000);
-            Call resultCall = resultHttpClient.newCall(resultRequest);
-            Response resultResponse = resultCall.execute();
-            JSONObject resultJsonObject = new JSONObject(resultResponse.body().string());
-            String downloadURL = resultJsonObject.get("result").toString();
-            JSONObject downloadURLStr = new JSONObject(downloadURL);
-            String realURL = downloadURLStr.get("download_url").toString();
-            if (realURL != null) {
-                System.out.println("下载地址为:" + realURL);
+                /*OkHttpClient resultHttpClient = OKHttpClientBuilder.buildOKHttpClient().build();
+                Request resultRequest = new Request.Builder()
+                        .url(FebsConstant.QIHOO_LOSTASSETS_RESULT_URL + taskId)
+                        .header("X-Api-Key", FebsConstant.QIHOO_ASSETS_API_KEY)
+                        .header("timestamp", timeStampStr)
+                        .header("sign", encode(finalStr))
+                        .header("Content-Type", "application/json")
+                        .get()
+                        .build();
+                //查询等待时间
+                Thread.sleep(searchWaitTime);
+                Call resultCall = resultHttpClient.newCall(resultRequest);
+                Response resultResponse = resultCall.execute();
+                JSONObject resultJsonObject = new JSONObject(resultResponse.body().string());
+                String downloadURL = resultJsonObject.get("result").toString();
+                JSONObject downloadURLStr = new JSONObject(downloadURL);
+                String realURL = downloadURLStr.get("download_url").toString();*/
+            String realURL = getRealUrl(taskId, timeStampStr, finalStr, searchWaitTime);
+            if (realURL != null && !"null".equals(realURL)) {
+//                System.out.println("下载地址为:" + realURL);
+                DownloadUtil.get().download(realURL, dirPath, fileName, null);
+            }else {
+                realURL = getRealUrl(taskId, timeStampStr, finalStr, 1000*60*3);
+                if ("null".equals(realURL)) {
+                    logger.info("查询不到: " + fileName + "文件");
+                    return null;
+                }
                 DownloadUtil.get().download(realURL, dirPath, fileName, null);
             }
         } catch (Exception e) {
@@ -168,6 +182,27 @@ public class LostAssetsServiceImpl implements LostAssetsService {
     public static void main(String[] args) {
         String folder = DateUtil.format(new Date(), new SimpleDateFormat("yyyy-MM-dd-HH时mm分ss秒"));
         System.out.println(folder);
+    }
+
+    public static String getRealUrl(String taskId, String timeStampStr, String finalStr, Integer searchWaitTime) throws InterruptedException, IOException {
+        OkHttpClient resultHttpClient = OKHttpClientBuilder.buildOKHttpClient().build();
+        Request resultRequest = new Request.Builder()
+                .url(FebsConstant.QIHOO_LOSTASSETS_RESULT_URL + taskId)
+                .header("X-Api-Key", FebsConstant.QIHOO_ASSETS_API_KEY)
+                .header("timestamp", timeStampStr)
+                .header("sign", encode(finalStr))
+                .header("Content-Type", "application/json")
+                .get()
+                .build();
+        /**查询等待时间*/
+        Thread.sleep(searchWaitTime);
+        Call resultCall = resultHttpClient.newCall(resultRequest);
+        Response resultResponse = resultCall.execute();
+        JSONObject resultJsonObject = new JSONObject(resultResponse.body().string());
+        String downloadURL = resultJsonObject.get("result").toString();
+        JSONObject downloadURLStr = new JSONObject(downloadURL);
+        String realURL = downloadURLStr.get("download_url").toString();
+        return realURL;
     }
 
 }

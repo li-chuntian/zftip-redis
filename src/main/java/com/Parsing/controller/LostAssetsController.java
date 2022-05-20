@@ -18,7 +18,7 @@ public class LostAssetsController {
                                             @RequestParam("startTime") String queryStartTime,
                                             @RequestParam("endTime") String queryEndTime) {
         System.out.println("start===============================");
-        lostAssetsService.fetchLostAssetsResult(areaName, queryStartTime, queryEndTime);
+        lostAssetsService.fetchLostAssetsResult(areaName, queryStartTime, queryEndTime, 60 * 1000);
         return new FebsResponse().message("下载完成");
     }
 }
