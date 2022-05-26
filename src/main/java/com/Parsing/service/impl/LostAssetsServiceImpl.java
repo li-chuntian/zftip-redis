@@ -51,7 +51,6 @@ public class LostAssetsServiceImpl implements LostAssetsService {
         jsonObjectTemp.set("query", getIPsByAreaName(areaName));
         jsonObjectTemp.set("start_time", onceQueryStartTime);
         jsonObjectTemp.set("end_time", onceQueryEndTime);
-//        System.out.println(jsonObjectTemp.toString());
         RequestBody body = RequestBody.create(mediaType, jsonObjectTemp.toString());
         Request request = new Request.Builder()
                 .url(FebsConstant.QIHOO_LOSTASSETS_URL)
@@ -69,24 +68,6 @@ public class LostAssetsServiceImpl implements LostAssetsService {
             String resultJson = jsonObject.get("result").toString();
             JSONObject resultJsonStr = new JSONObject(resultJson);
             String taskId = resultJsonStr.get("task_id").toString();
-            /**获取失陷检测结果*/
-                /*OkHttpClient resultHttpClient = OKHttpClientBuilder.buildOKHttpClient().build();
-                Request resultRequest = new Request.Builder()
-                        .url(FebsConstant.QIHOO_LOSTASSETS_RESULT_URL + taskId)
-                        .header("X-Api-Key", FebsConstant.QIHOO_ASSETS_API_KEY)
-                        .header("timestamp", timeStampStr)
-                        .header("sign", encode(finalStr))
-                        .header("Content-Type", "application/json")
-                        .get()
-                        .build();
-                //查询等待时间
-                Thread.sleep(searchWaitTime);
-                Call resultCall = resultHttpClient.newCall(resultRequest);
-                Response resultResponse = resultCall.execute();
-                JSONObject resultJsonObject = new JSONObject(resultResponse.body().string());
-                String downloadURL = resultJsonObject.get("result").toString();
-                JSONObject downloadURLStr = new JSONObject(downloadURL);
-                String realURL = downloadURLStr.get("download_url").toString();*/
             String realURL = getRealUrl(taskId, timeStampStr, finalStr, searchWaitTime);
             if (realURL != null && !"null".equals(realURL)) {
 //                System.out.println("下载地址为:" + realURL);
@@ -140,6 +121,8 @@ public class LostAssetsServiceImpl implements LostAssetsService {
                 return FebsConstant.SICHUAN_EXIT_IPS;
             case "guiyang":
                 return FebsConstant.GUIYANG_EXIT_IPS;
+            case "heilongjiang":
+                return FebsConstant.HEILONGJIANG_EXIT_IPS;
         }
         return null;
     }

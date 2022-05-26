@@ -21,8 +21,7 @@ public class MenaceInfoTask extends TimerTask {
 
     private final RedisController redisController;
 
-    private final List<String> areaNameList = Arrays.asList("changde", "chongqing", "jiangsu", "guizhou", "henan", "jingmen", "yunnan", "guangdong", "kunming", "hunan", "hebei", "sichuan", "guiyang");
-
+    private final List<String> areaNameList = Arrays.asList("changde", "chongqing", "jiangsu", "guizhou", "henan", "jingmen", "yunnan", "guangdong", "kunming", "hunan", "hebei", "sichuan", "guiyang", "heilongjiang");
     public MenaceInfoTask(LostAssetsService lostAssetsService, IZipAnalyseService zipAnalyseService, RedisController redisController) {
         this.lostAssetsService = lostAssetsService;
         this.zipAnalyseService = zipAnalyseService;
@@ -34,7 +33,9 @@ public class MenaceInfoTask extends TimerTask {
     public void run() {
         Date yesterday = DateUtil.parse(DateUtil.yesterday().toDateStr());
         String queryStartTime = DateUtil.beginOfDay(yesterday).toString();
+//        queryStartTime = "2022-05-22 00:00:00";
         String queryEndTime = DateUtil.endOfDay(yesterday).toString();
+//        queryEndTime = "2022-05-26 00:00:00";
         logger.info("任务开始, 本次查询时间段: " + queryStartTime + " - " + queryEndTime);
         // 创建本次任务压缩包存放目录--
         FebsConstant.UNCOMPRESS = "/home/zftip_redis//cache/" + DateUtil.format(new Date(), new SimpleDateFormat("yyyy-MM-dd")) + "/";
@@ -64,5 +65,6 @@ public class MenaceInfoTask extends TimerTask {
             }
         }
         logger.info("本次任务结束");
+        System.out.println("本次任务结束");
     }
 }
